@@ -38,6 +38,7 @@ using ILog = log4net.ILog;
 using Placemark = SharpKml.Dom.Placemark;
 using Point = System.Drawing.Point;
 
+
 namespace MissionPlanner.GCSViews
 {
     public partial class FlightPlanner : MyUserControl, IDeactivate, IActivate
@@ -6143,11 +6144,50 @@ Column 1: Field type (RALLY is the only one at the moment -- may have RALLY_LAND
 
         private void flyToHereToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            
         }
 
         private void lbl_distance_Click(object sender, EventArgs e)
         {
+           
+        }
+
+
+
+        private void polygonLineToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            
+            Form1 f1 = new Form1();        
+            int i, k;
+            k = drawnpolygon.Points.Count;
+            f1.dataGridView1.RowCount = k+1;
+            string h = "50";
+            InputBox.Show("海拔", "海拔", ref h);
+            for (i =0;i<k;i++)
+            {
+                polygongridmode = false;
+                AddWPToMap(drawnpolygon.Points[i].Lat, drawnpolygon.Points[i].Lng, Int32.Parse(h));
+                setfromMap(drawnpolygon.Points[i].Lat, drawnpolygon.Points[i].Lng, Int32.Parse(h));
+            }
+            AddWPToMap(drawnpolygon.Points[0].Lat, drawnpolygon.Points[0].Lng, Int32.Parse(h));
+            setfromMap(drawnpolygon.Points[0].Lat, drawnpolygon.Points[0].Lng, Int32.Parse(h));
+            for (i = 0; i < k; i++)
+            {
+                f1.dataGridView1.Rows[i].Cells[0].Value = i +1;
+                f1.dataGridView1.Rows[i].Cells[1].Value = drawnpolygon.Points[i].Lng ;
+                f1.dataGridView1.Rows[i].Cells[2].Value = drawnpolygon.Points[i].Lat;
+            }
+            f1.dataGridView1.Rows[k].Cells[0].Value = k+1;
+            f1.dataGridView1.Rows[k].Cells[1].Value = drawnpolygon.Points[0].Lng ;
+            f1.dataGridView1.Rows[k].Cells[2].Value = drawnpolygon.Points[0].Lat ;
+            f1.Show();
+            if (drawnpolygon == null)
+                return;
+            drawnpolygon.Points.Clear();
+            drawnpolygonsoverlay.Markers.Clear();
+            MainMap.Invalidate();
+
+            writeKML();
 
         }
     }
